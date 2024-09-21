@@ -36,12 +36,14 @@ import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
+    var token: String = ""
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         GlobalScope.launch {
             delay(10000L)
-            testRequest()
+            //testRequest()
         }
         enableEdgeToEdge()
         setContent {

@@ -41,15 +41,16 @@ class LoginViewModel: ViewModel(){
     }
 
 
-    fun login(){
+    fun login(callback: (success: Boolean, token: String) -> Unit){
         viewModelScope.launch {
-        val user = User(name = "Maurício de Moura", email = "mauriciomoura837@gmail.com", password = "123")
-        var createdUser = ExpenseControllerApi.createUser(user)
-       try {
-           val loginResponse = ExpenseControllerApi.loginUser(LoginRequest(user.email, user.password))
-           val token = loginResponse.data.token
-       }catch (e:Exception) {
-       }
+           try {
+               val loginResponse = ExpenseControllerApi.loginUser(LoginRequest(uiState.value.userEmail, uiState.value.password))
+               val token = loginResponse.data.token
+               callback(true, token)
+           }catch (e:Exception) {
+               Log.d("Erro", error(e))
+               callback(false, "")
+           }
        }
     }
 }

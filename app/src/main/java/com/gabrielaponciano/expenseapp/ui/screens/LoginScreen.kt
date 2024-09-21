@@ -1,6 +1,7 @@
 package com.gabrielaponciano.expenseapp.ui.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -47,6 +49,7 @@ import com.gabrielaponciano.expenseapp.ui.viewModel.LoginViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navController: NavController){
+    val context = LocalContext.current
     val uiState by loginViewModel.uiState.collectAsState()
     val passwordVisible by loginViewModel.isPasswordVisible.collectAsState()
 
@@ -63,7 +66,14 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
         },
         bottomBar = {
             BottomButton(title = "Fazer Login") {
-                loginViewModel.login()
+                loginViewModel.login { success, token ->
+                    if(success) {
+                        Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
+                        //TODO: SALVA O TOKEN EM ALGUM LUGAR GLOBAL PRA USAR NAS OUTRAS REQUISIÇÕES
+                    } else {
+                        Toast.makeText(context, "Erro ao realizar cadastro.", Toast.LENGTH_SHORT).show()
+                    }
+                }
                 navController.navigate("home")
             }
         }
