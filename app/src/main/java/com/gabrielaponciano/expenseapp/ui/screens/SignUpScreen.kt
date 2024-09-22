@@ -1,9 +1,9 @@
 package com.gabrielaponciano.expenseapp.ui.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,28 +35,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.gabrielaponciano.expenseapp.model.User
 import com.gabrielaponciano.expenseapp.ui.components.BottomButton
-import com.gabrielaponciano.expenseapp.ui.states.LoginUiState
+import com.gabrielaponciano.expenseapp.ui.states.SignUpUiState
 import com.gabrielaponciano.expenseapp.ui.theme.BackField
-import com.gabrielaponciano.expenseapp.ui.theme.Purple40
 import com.gabrielaponciano.expenseapp.ui.theme.TextFieldBackground
-import com.gabrielaponciano.expenseapp.ui.viewModel.LoginViewModel
+import com.gabrielaponciano.expenseapp.ui.viewModel.SignUpViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navController: NavController){
+fun SignUpScreen(signUpViewModel: SignUpViewModel, uiState: SignUpUiState, navController: NavController){
+    val uiState by signUpViewModel.uiState.collectAsState()
+    val passwordVisible by signUpViewModel.isPasswordVisible.collectAsState()
     val context = LocalContext.current
-    val uiState by loginViewModel.uiState.collectAsState()
-    val passwordVisible by loginViewModel.isPasswordVisible.collectAsState()
-
     Scaffold (
         topBar = {
-            CenterAlignedTopAppBar(title = { Text(text = "Login", fontWeight = FontWeight.Bold)},
+            CenterAlignedTopAppBar(title = { Text(text = "Sign Up", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.Default.Close , contentDescription = "Fechar")
@@ -66,14 +62,19 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
                     containerColor = Color.White))
         },
         bottomBar = {
-            BottomButton(title = "Fazer Login") {
-                loginViewModel.login { success, token ->
-                    if(success) {
-                        Toast.makeText(context, "LogIn realizado com sucesso!", Toast.LENGTH_SHORT).show()
+            BottomButton(title = "Fazer Sign Up") {
+                signUpViewModel.signUp(
+                    name = uiState.userName,
+                    email = uiState.userEmail,
+                    password = uiState.password
+                ) { success ->
+                    if (success) {
+                        Log.d("SignUp", "User signed up successfully")
+                        Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
                         navController.navigate("home")
-                        //TODO: SALVA O TOKEN EM ALGUM LUGAR GLOBAL PRA USAR NAS OUTRAS REQUISIÇÕES
                     } else {
-                        Toast.makeText(context, "Erro ao realizar cadastro.", Toast.LENGTH_SHORT).show()
+                        // Handle error
+                        Log.d("SignUp", "Error signing up user")
                     }
                 }
             }
@@ -88,9 +89,23 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
         ){
             HorizontalDivider(modifier = Modifier.height(96.dp))
             OutlinedTextField(
-                value = uiState.userEmail,
-                onValueChange = { loginViewModel.loginUserName(it)
+                value = uiState.userName,
+                onValueChange = { signUpViewModel.SignUpUserName(it)
 
+                },
+                label = { Text(text = "Nome de Usúario") },
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = BackField,
+                    unfocusedContainerColor = BackField,
+                    focusedBorderColor = TextFieldBackground,
+                    unfocusedBorderColor= TextFieldBackground
+                ),
+                modifier = Modifier.width(320.dp)
+            )
+            OutlinedTextField(
+                value = uiState.userEmail,
+                onValueChange = { signUpViewModel.SignUpEmail(it)
                 },
                 label = { Text(text = "Email") },
                 singleLine = true,
@@ -104,7 +119,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
             )
             OutlinedTextField(
                 value = uiState.password,
-                onValueChange = { loginViewModel.loginPassword(it)
+                onValueChange = { signUpViewModel.SignUpPassword(it)
                 },
                 label = { Text(text = "Senha") },
                 singleLine = true,
@@ -118,17 +133,9 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     val image = if (passwordVisible) Icons.Default.Check else Icons.Default.Close
-                    IconButton(onClick = { loginViewModel.togglePasswordVisibility() }) {
+                    IconButton(onClick = { signUpViewModel.togglePasswordVisibility() }) {
                         Icon(imageVector = image, contentDescription = null)
                     }
-                }
-            )
-            Text(text = "Não possui conta? SignUp agora!",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Purple40,
-                modifier = Modifier.clickable {
-                    navController.navigate("sign")
                 }
             )
         }
@@ -136,6 +143,6 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
 }
 @Preview
 @Composable
-fun loginPreview(){
-    LoginScreen(loginViewModel = LoginViewModel(), uiState = LoginUiState(), rememberNavController())
+fun SignUpPreview(){
+    SignUpScreen(signUpViewModel = SignUpViewModel(), uiState = SignUpUiState(), rememberNavController())
 }

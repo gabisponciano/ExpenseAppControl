@@ -27,9 +27,12 @@ import com.gabrielaponciano.expenseapp.network.ExpenseControllerApi
 import com.gabrielaponciano.expenseapp.ui.screens.AddExpense
 import com.gabrielaponciano.expenseapp.ui.screens.HomeScreen
 import com.gabrielaponciano.expenseapp.ui.screens.LoginScreen
+import com.gabrielaponciano.expenseapp.ui.screens.SignUpScreen
 import com.gabrielaponciano.expenseapp.ui.states.LoginUiState
+import com.gabrielaponciano.expenseapp.ui.states.SignUpUiState
 import com.gabrielaponciano.expenseapp.ui.theme.ExpenseAppTheme
 import com.gabrielaponciano.expenseapp.ui.viewModel.LoginViewModel
+import com.gabrielaponciano.expenseapp.ui.viewModel.SignUpViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -51,13 +54,16 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "login"){
                     composable("home"){
-                        HomeScreen(navController)
+                        HomeScreen(navController, SignUpUiState())
                     }
                     composable("add"){
                         AddExpense()
                     }
                     composable("login"){
                         LoginScreen(loginViewModel = LoginViewModel(), uiState = LoginUiState(),navController)
+                    }
+                    composable("sign"){
+                        SignUpScreen(signUpViewModel = SignUpViewModel(), SignUpUiState(), navController)
                     }
                 }
             }
@@ -67,7 +73,7 @@ class MainActivity : ComponentActivity() {
     suspend fun testRequest() {
         try {
             // USER
-            var user = User(name = "Mauricio de Moura", email = "mauriciomoura837@gmail.com", password = "123")
+            var user = User(name = "Gabriela", email = "gabriela.ponciano@gmail.com", password = "senha123")
             var createdUser = ExpenseControllerApi.createUser(user)
             var loginResponse = ExpenseControllerApi.loginUser(LoginRequest(user.email, user.password))
             val token = loginResponse.data.token

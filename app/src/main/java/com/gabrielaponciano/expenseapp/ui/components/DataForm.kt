@@ -147,3 +147,4 @@ fun DataForm(modifier: Modifier, title:String, navController: NavController) {
         }
     }
 }
+

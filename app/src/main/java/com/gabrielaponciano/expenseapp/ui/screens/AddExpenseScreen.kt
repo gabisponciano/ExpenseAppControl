@@ -50,7 +50,7 @@ fun AddExpense(){
                     text = "Add Expense",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = Color.Gray,
                     modifier = Modifier
                         .padding(16.dp)
                         .align(Alignment.Center)
@@ -69,6 +69,5 @@ fun AddExpense(){
 
         }
     }
-
-        }
+}
 

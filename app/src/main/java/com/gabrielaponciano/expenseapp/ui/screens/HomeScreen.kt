@@ -33,10 +33,12 @@ import com.gabrielaponciano.expenseapp.R
 import com.gabrielaponciano.expenseapp.model.Spending
 import com.gabrielaponciano.expenseapp.ui.components.AddButton
 import com.gabrielaponciano.expenseapp.ui.components.CardItem
+import com.gabrielaponciano.expenseapp.ui.states.LoginUiState
+import com.gabrielaponciano.expenseapp.ui.states.SignUpUiState
 import com.gabrielaponciano.expenseapp.ui.viewModel.AddExpenseViewModel
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, uiState: SignUpUiState) {
     val addExpenseViewModel = viewModel<AddExpenseViewModel>()
     val expenses by addExpenseViewModel.expenseList.collectAsState()
 
@@ -64,7 +66,7 @@ fun HomeScreen(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Hello, User",
+                        text = "Hello!" ,
                         fontSize = 32.sp,
                         color = Color.White,
                         modifier = Modifier.padding(16.dp)
@@ -112,8 +114,8 @@ fun ExpenseItem(expense: Spending) {
     }
 }
 
-@Composable
-@Preview
-fun HomeScreenPreview(){
-    HomeScreen(rememberNavController())
-}
+//@Composable
+//@Preview
+//fun HomeScreenPreview(){
+//    HomeScreen(rememberNavController())
+//}
