@@ -3,12 +3,14 @@ package com.gabrielaponciano.expenseapp.ui.viewModel
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gabrielaponciano.expenseapp.model.LoginRequest
 import com.gabrielaponciano.expenseapp.model.User
 import com.gabrielaponciano.expenseapp.model.createSpending
 import com.gabrielaponciano.expenseapp.network.ExpenseControllerApi
+import com.gabrielaponciano.expenseapp.ui.LocalStore
 import com.gabrielaponciano.expenseapp.ui.states.LoginUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

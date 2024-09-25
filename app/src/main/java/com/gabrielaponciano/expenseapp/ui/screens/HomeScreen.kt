@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +32,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.gabrielaponciano.expenseapp.R
 import com.gabrielaponciano.expenseapp.model.Spending
+import com.gabrielaponciano.expenseapp.ui.LocalStore
 import com.gabrielaponciano.expenseapp.ui.components.AddButton
 import com.gabrielaponciano.expenseapp.ui.components.CardItem
 import com.gabrielaponciano.expenseapp.ui.states.LoginUiState
@@ -41,6 +43,7 @@ import com.gabrielaponciano.expenseapp.ui.viewModel.AddExpenseViewModel
 fun HomeScreen(navController: NavController, uiState: SignUpUiState) {
     val addExpenseViewModel = viewModel<AddExpenseViewModel>()
     val expenses by addExpenseViewModel.expenseList.collectAsState()
+    addExpenseViewModel.token = LocalStore.getToken(LocalContext.current).toString()
 
     Scaffold (
         bottomBar = {

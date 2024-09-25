@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.gabrielaponciano.expenseapp.model.User
+import com.gabrielaponciano.expenseapp.ui.LocalStore
 import com.gabrielaponciano.expenseapp.ui.components.BottomButton
 import com.gabrielaponciano.expenseapp.ui.states.LoginUiState
 import com.gabrielaponciano.expenseapp.ui.theme.BackField
@@ -71,7 +72,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
                     if(success) {
                         Toast.makeText(context, "LogIn realizado com sucesso!", Toast.LENGTH_SHORT).show()
                         navController.navigate("home")
-                        //TODO: SALVA O TOKEN EM ALGUM LUGAR GLOBAL PRA USAR NAS OUTRAS REQUISIÇÕES
+                        LocalStore.saveToken(context, token)
                     } else {
                         Toast.makeText(context, "Erro ao realizar cadastro.", Toast.LENGTH_SHORT).show()
                     }

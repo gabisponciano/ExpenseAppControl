@@ -34,12 +34,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.gabrielaponciano.expenseapp.ui.LocalStore
 import com.gabrielaponciano.expenseapp.ui.viewModel.AddExpenseViewModel
 import java.time.Instant
 import java.time.LocalDateTime
@@ -50,6 +52,7 @@ import java.time.ZoneId
 @Composable
 fun DataForm(modifier: Modifier, title:String, navController: NavController) {
     val addExpenseViewModel = viewModel<AddExpenseViewModel>()
+    addExpenseViewModel.token = LocalStore.getToken(LocalContext.current).toString()
     val uiState by addExpenseViewModel.uiState.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
