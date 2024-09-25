@@ -68,11 +68,12 @@ fun LoginScreen(loginViewModel: LoginViewModel, uiState: LoginUiState, navContro
         },
         bottomBar = {
             BottomButton(title = "Fazer Login") {
-                loginViewModel.login { success, token ->
+                loginViewModel.login { success, token, userId ->
                     if(success) {
                         Toast.makeText(context, "LogIn realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                        navController.navigate("home")
                         LocalStore.saveToken(context, token)
+                        LocalStore.saveUserId(context, userId)
+                        navController.navigate("home")
                     } else {
                         Toast.makeText(context, "Erro ao realizar cadastro.", Toast.LENGTH_SHORT).show()
                     }

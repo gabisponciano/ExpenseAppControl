@@ -47,7 +47,7 @@ class AddExpenseViewModel: ViewModel() {
                 val response = ExpenseControllerApi.createSpendingUser(newSpending, token)
                 _expenseList.value = _expenseList.value + newSpending
             } catch (e: Exception) {
-                Log.d("Erro", error(e))
+                null
             }
         }
     }

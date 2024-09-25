@@ -15,4 +15,15 @@ object LocalStore {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         return prefs.getString("token", null)
     }
+
+    fun saveUserId(context: Context, value: Int) {
+        val editor = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit()
+        editor.putInt("userId", value)
+        editor.apply()
+    }
+
+    fun getUserId(context: Context): Int {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return prefs.getInt("userId", 0)
+    }
 }

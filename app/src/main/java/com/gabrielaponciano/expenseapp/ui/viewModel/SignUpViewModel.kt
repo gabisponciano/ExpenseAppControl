@@ -1,6 +1,7 @@
 package com.gabrielaponciano.expenseapp.ui.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gabrielaponciano.expenseapp.model.LoginRequest
@@ -43,15 +44,14 @@ class SignUpViewModel: ViewModel(){
     fun togglePasswordVisibility() {
         _isPasswordVisible.value = !_isPasswordVisible.value
     }
-    fun signUp(name:String,email:String, password: String, callback: (success: Boolean) -> Unit){
+    fun signUp(name:String,email:String, password: String, callback: (success: Boolean, userId: Int) -> Unit){
         viewModelScope.launch {
             try {
                 var user = User(name = name, email = email, password = password)
                 var createdUser = ExpenseControllerApi.createUser(user)
-                callback(true)
+                callback(true, createdUser.data.id ?: 0)
             }catch (e:Exception) {
-                Log.d("Erro", error(e))
-                callback(false)
+                callback(false, 0)
             }
         }
     }

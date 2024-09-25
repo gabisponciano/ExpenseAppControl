@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.gabrielaponciano.expenseapp.ui.LocalStore
 import com.gabrielaponciano.expenseapp.ui.components.BottomButton
 import com.gabrielaponciano.expenseapp.ui.states.SignUpUiState
 import com.gabrielaponciano.expenseapp.ui.theme.BackField
@@ -67,11 +68,12 @@ fun SignUpScreen(signUpViewModel: SignUpViewModel, uiState: SignUpUiState, navCo
                     name = uiState.userName,
                     email = uiState.userEmail,
                     password = uiState.password
-                ) { success ->
+                ) { success, userId ->
                     if (success) {
                         Log.d("SignUp", "User signed up successfully")
+                        LocalStore.saveUserId(context, userId)
                         Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
-                        navController.navigate("home")
+                        navController.navigate("login")
                     } else {
                         // Handle error
                         Log.d("SignUp", "Error signing up user")

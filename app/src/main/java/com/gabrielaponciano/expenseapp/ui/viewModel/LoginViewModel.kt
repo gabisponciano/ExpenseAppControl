@@ -43,15 +43,15 @@ class LoginViewModel: ViewModel(){
     }
 
 
-    fun login(callback: (success: Boolean, token: String) -> Unit){
+    fun login(callback: (success: Boolean, token: String, userId: Int) -> Unit){
         viewModelScope.launch {
            try {
                val loginResponse = ExpenseControllerApi.loginUser(LoginRequest(uiState.value.userEmail, uiState.value.password))
                val token = loginResponse.data.token
-               callback(true, token)
+               val userId = loginResponse.data.userId
+               callback(true, token, userId)
            }catch (e:Exception) {
-               Log.d("Erro", error(e))
-               callback(false, "")
+               callback(false, "", 0)
            }
        }
     }

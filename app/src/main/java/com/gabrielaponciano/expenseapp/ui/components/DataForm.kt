@@ -51,6 +51,7 @@ import java.time.ZoneId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DataForm(modifier: Modifier, title:String, navController: NavController) {
+    val context = LocalContext.current
     val addExpenseViewModel = viewModel<AddExpenseViewModel>()
     addExpenseViewModel.token = LocalStore.getToken(LocalContext.current).toString()
     val uiState by addExpenseViewModel.uiState.collectAsState()
@@ -137,7 +138,7 @@ fun DataForm(modifier: Modifier, title:String, navController: NavController) {
             addExpenseViewModel.addExpense(
                 name = uiState.name,
                 value = uiState.value?:0f,
-                userId = addExpenseViewModel.setUserId(userId),
+                userId = LocalStore.getUserId(context),
                 day = date,
                 token = addExpenseViewModel.setUserToken(token)
             )
