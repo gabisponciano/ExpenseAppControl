@@ -54,10 +54,10 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "login"){
                     composable("home"){
-                        HomeScreen(navController, SignUpUiState())
+                        HomeScreen(navController = navController)
                     }
                     composable("add"){
-                        AddExpense()
+                        AddExpense(navController = navController)
                     }
                     composable("login"){
                         LoginScreen(loginViewModel = LoginViewModel(), uiState = LoginUiState(),navController)

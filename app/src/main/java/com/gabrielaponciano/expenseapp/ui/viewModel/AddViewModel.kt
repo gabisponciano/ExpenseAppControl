@@ -1,21 +1,28 @@
 package com.gabrielaponciano.expenseapp.ui.viewModel
 
+import android.app.Application
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gabrielaponciano.expenseapp.model.Spending
 import com.gabrielaponciano.expenseapp.model.createSpending
 import com.gabrielaponciano.expenseapp.network.ExpenseControllerApi
+import com.gabrielaponciano.expenseapp.ui.LocalStore
 import com.gabrielaponciano.expenseapp.ui.states.AddExpenseUiState
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -45,9 +52,23 @@ class AddExpenseViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val response = ExpenseControllerApi.createSpendingUser(newSpending, token)
-                _expenseList.value = _expenseList.value + newSpending
+                _expenseList.value = _expenseList.value + listOf(newSpending)
+                Log.d("Teste","${expenseList.value}")
             } catch (e: Exception) {
-                null
+                Log.e("Error", "Failed to add expense: ${e.message}")
+            }
+        }
+    }
+
+    fun removeExpense(spending: Spending) {
+        viewModelScope.launch {
+            try {
+                Log.d("RemoveExpense", "Tentando remover despesa com ID: ${spending.id}")
+                val response = ExpenseControllerApi.deleteSpendingUser(spending.id, token)
+                _expenseList.value = _expenseList.value.filter { it.id != spending.id }
+                Log.d("DeleteExpense", "Despesa removida com sucesso: ${spending.id}")
+            } catch (e: Exception) {
+                Log.e("Error", "Erro ao remover despesa: ${e.message}")
             }
         }
     }
@@ -81,5 +102,26 @@ class AddExpenseViewModel: ViewModel() {
         val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
         return formatter.format(Date(millis))
     }
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertStringToDate(dateString: String): String {
+        return try {
+
+            val originalFormat = DateTimeFormatter.ISO_DATE_TIME
+            val targetFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy")
+
+            val parsedDate = LocalDateTime.parse(dateString, originalFormat)
+            parsedDate.format(targetFormat)
+        } catch (e: Exception) {
+            dateString
+        }
+    }
+
+    val balance: StateFlow<Float> = _expenseList.map { expenses ->
+        expenses.sumOf { it.value.toDouble() }.toFloat()
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0f)
+
+    val lastExpense: StateFlow<Float?> = _expenseList.map { expenses ->
+        expenses.lastOrNull()?.value
+    }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
 }

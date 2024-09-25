@@ -1,10 +1,14 @@
 package com.gabrielaponciano.expenseapp.ui.screens
 
+import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,6 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,25 +30,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.gabrielaponciano.expenseapp.R
 import com.gabrielaponciano.expenseapp.model.Spending
 import com.gabrielaponciano.expenseapp.ui.LocalStore
 import com.gabrielaponciano.expenseapp.ui.components.AddButton
 import com.gabrielaponciano.expenseapp.ui.components.CardItem
-import com.gabrielaponciano.expenseapp.ui.states.LoginUiState
 import com.gabrielaponciano.expenseapp.ui.states.SignUpUiState
 import com.gabrielaponciano.expenseapp.ui.viewModel.AddExpenseViewModel
 
 @Composable
-fun HomeScreen(navController: NavController, uiState: SignUpUiState) {
-    val addExpenseViewModel = viewModel<AddExpenseViewModel>()
+fun HomeScreen(navController: NavController) {
+    val activity = LocalContext.current as ComponentActivity
+    val addExpenseViewModel: AddExpenseViewModel = viewModel(activity)
+    //val addExpenseViewModel = viewModel<AddExpenseViewModel>()
     val expenses by addExpenseViewModel.expenseList.collectAsState()
+    val balance by addExpenseViewModel.balance.collectAsState()
+    val lastExpense by addExpenseViewModel.lastExpense.collectAsState()
     addExpenseViewModel.token = LocalStore.getToken(LocalContext.current).toString()
 
     Scaffold (
@@ -77,8 +84,8 @@ fun HomeScreen(navController: NavController, uiState: SignUpUiState) {
 
                     CardItem(
                         modifier = Modifier.padding(top = 16.dp),
-                        balance = "$2560.00",
-                        expense = "$1535"
+                        balance = "$${String.format("%.2f", balance)}",
+                        expense =  if (lastExpense != null) "$${String.format("%.2f", lastExpense)}" else "$0.00"
                     )
                 }
             }
@@ -92,33 +99,48 @@ fun HomeScreen(navController: NavController, uiState: SignUpUiState) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(addExpenseViewModel.expenseList.value) { expense ->
-                    ExpenseItem(expense)
+                items(expenses) { spending ->
+                    ExpenseItem(spending)
                 }
 
             }
         }
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ExpenseItem(expense: Spending) {
+fun ExpenseItem(spending: Spending) {
+    val activity = LocalContext.current as ComponentActivity
+    val addExpenseViewModel: AddExpenseViewModel = viewModel(activity)
+    val formattedDate = addExpenseViewModel.convertStringToDate(spending.day)
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .shadow(4.dp, RoundedCornerShape(8.dp))
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = expense.name, fontSize = 18.sp)
-            Text(text = "Amount: ${expense.value}", fontSize = 14.sp)
-            Text(text = "Date: ${expense.day}", fontSize = 14.sp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = spending.name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Amount: $${spending.value}", fontSize = 14.sp, color = Color.Red, fontWeight = FontWeight.Bold)
+                Text(text = "Date: $formattedDate", fontSize = 14.sp)
+            }
 
+            IconButton(onClick = {
+                addExpenseViewModel.removeExpense(spending)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_delete),
+                    contentDescription = "Delete Expense",
+                    tint = Color.Gray
+                )
+            }
         }
     }
 }
-
-//@Composable
-//@Preview
-//fun HomeScreenPreview(){
-//    HomeScreen(rememberNavController())
-//}

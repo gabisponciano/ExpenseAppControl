@@ -18,14 +18,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.gabrielaponciano.expenseapp.R
 import com.gabrielaponciano.expenseapp.ui.components.DataForm
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AddExpense(){
-    val navController = rememberNavController()
+fun AddExpense(navController: NavController){
     Surface (modifier = Modifier.fillMaxSize()){
         ConstraintLayout (modifier = Modifier.fillMaxSize()){
             val (nameRow, card, topBar) = createRefs()
@@ -63,8 +63,8 @@ fun AddExpense(){
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                 },
-                "Add Expense",
-                navController
+                title = "Add Expense",
+                navController = navController
             )
 
         }

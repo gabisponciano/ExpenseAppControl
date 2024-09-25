@@ -1,6 +1,7 @@
 package com.gabrielaponciano.expenseapp.ui.components
 
 import android.os.Build
+import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -52,7 +53,9 @@ import java.time.ZoneId
 @Composable
 fun DataForm(modifier: Modifier, title:String, navController: NavController) {
     val context = LocalContext.current
-    val addExpenseViewModel = viewModel<AddExpenseViewModel>()
+    val activity = LocalContext.current as ComponentActivity
+    val addExpenseViewModel: AddExpenseViewModel = viewModel(activity)
+    //val addExpenseViewModel = viewModel<AddExpenseViewModel>()
     addExpenseViewModel.token = LocalStore.getToken(LocalContext.current).toString()
     val uiState by addExpenseViewModel.uiState.collectAsState()
     var showDatePicker by remember { mutableStateOf(false) }
