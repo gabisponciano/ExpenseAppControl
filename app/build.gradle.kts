@@ -27,7 +27,7 @@ android {
             properties.load(localProperties.inputStream())
 
             // Adicionar BACKEND_URL como variável de ambiente no BuildConfig
-            buildConfigField("String", "BACKEND_URL", "\"${properties.getProperty("BACKEND_URL", "http://192.168.0.13:3000")}\"")
+            buildConfigField("String", "BACKEND_URL", "\"${properties.getProperty("BACKEND_URL", "http://ec2-44-201-104-242.compute-1.amazonaws.com:3000")}\"")
         }
     }
 

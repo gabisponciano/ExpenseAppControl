@@ -42,6 +42,7 @@ import com.gabrielaponciano.expenseapp.ui.components.CardItem
 import com.gabrielaponciano.expenseapp.ui.states.SignUpUiState
 import com.gabrielaponciano.expenseapp.ui.viewModel.AddExpenseViewModel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(navController: NavController) {
     val activity = LocalContext.current as ComponentActivity
