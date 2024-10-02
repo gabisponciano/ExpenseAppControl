@@ -52,6 +52,7 @@ fun HomeScreen(navController: NavController) {
     val balance by addExpenseViewModel.balance.collectAsState()
     val lastExpense by addExpenseViewModel.lastExpense.collectAsState()
     addExpenseViewModel.token = LocalStore.getToken(LocalContext.current).toString()
+    addExpenseViewModel.loadExpenses(LocalStore.getUserId(LocalContext.current),LocalStore.getToken(LocalContext.current).toString())
 
     Scaffold (
         bottomBar = {

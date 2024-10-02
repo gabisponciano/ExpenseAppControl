@@ -65,7 +65,7 @@ class AddExpenseViewModel: ViewModel() {
         viewModelScope.launch {
             try {
                 val expenses = ExpenseControllerApi.getSpendingsByUserId(userId, token)
-                //_expenseList.value = expenses
+                _expenseList.value = expenses.data
             } catch (e: Exception) {
                 Log.e("Error", "Failed to load expenses: ${e.message}")
             }
